@@ -35,9 +35,7 @@ C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\CurrencyChangeDialog.g.cs
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\TransactionsDialog.g.cs
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\AddAccountDialog.baml
-C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\AddBankDialog.baml
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\AddAccountDialog.g.cs
-C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\AddBankDialog.g.cs
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\AmountDialog.baml
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\CurrencyDialog.baml
 C:\Users\Patri\AN3_sem1\FCPL\Banking_system\BankingApp\obj\Debug\net8.0-windows\Views\TransactionWindow.baml

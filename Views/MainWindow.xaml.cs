@@ -62,17 +62,6 @@ namespace BankingApp.Views
             AccountsListView.ItemsSource = allAccounts;
         }
 
-        private void CreateBank_Click(object sender, RoutedEventArgs e)
-        {
-            var dialog = new AddBankDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                var bank = new Bank(dialog.BankName, dialog.Swift);
-                _banks.Add(bank);
-                SaveData();
-            }
-        }
-
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new AddAccountDialog(_banks);

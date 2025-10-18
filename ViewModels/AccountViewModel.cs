@@ -2,6 +2,7 @@ namespace BankingApp.ViewModels;
 
 using BankingApp.Helpers;
 using BankingApp.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -62,7 +63,24 @@ public class AccountViewModel : BaseViewModel
 
     private decimal RateProvider(AccountCurrency from, AccountCurrency to)
     {
-        // Implement currency conversion logic here
-        return 1.0m; // Placeholder for conversion rate
+        if (from == to) return 1m;
+
+        var rates = new Dictionary<(AccountCurrency, AccountCurrency), decimal>
+        {
+            { (AccountCurrency.RON, AccountCurrency.EUR), 0.20m },
+            { (AccountCurrency.EUR, AccountCurrency.RON), 5.0m },
+            { (AccountCurrency.USD, AccountCurrency.EUR), 0.92m },
+            { (AccountCurrency.EUR, AccountCurrency.USD), 1.09m },
+            { (AccountCurrency.GBP, AccountCurrency.EUR), 1.17m },
+            { (AccountCurrency.EUR, AccountCurrency.GBP), 0.85m },
+            { (AccountCurrency.USD, AccountCurrency.RON), 4.6m },
+            { (AccountCurrency.RON, AccountCurrency.USD), 0.22m },
+            { (AccountCurrency.GBP, AccountCurrency.RON), 5.85m },
+            { (AccountCurrency.RON, AccountCurrency.GBP), 0.17m },
+            { (AccountCurrency.USD, AccountCurrency.GBP), 0.78m },
+            { (AccountCurrency.GBP, AccountCurrency.USD), 1.28m }
+        };
+
+        return rates.TryGetValue((from, to), out var rate) ? rate : 1m;
     }
 }
