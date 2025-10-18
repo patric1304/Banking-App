@@ -48,9 +48,3 @@ The Banking App is a simple banking system application built using C# and the .N
 - Upon launching the application, you will be presented with the main window.
 - Use the navigation options to access account management and transaction features.
 - Follow the prompts to create accounts, make deposits, withdraw funds, and change currencies.
-
-## Contributing
-Contributions are welcome! Please feel free to submit a pull request or open an issue for any enhancements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for more details.
