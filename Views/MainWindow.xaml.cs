@@ -81,6 +81,24 @@ namespace BankingApp.Views
             TotalBanksText.Text = _banks.Count.ToString();
         }
 
+        private void ViewAccounts_Click(object sender, RoutedEventArgs e)
+        {
+            if (AccountsGroupBox.Visibility == Visibility.Collapsed)
+            {
+                // Show accounts, hide welcome
+                AccountsGroupBox.Visibility = Visibility.Visible;
+                WelcomePanel.Visibility = Visibility.Collapsed;
+                ViewAccountsButton.Content = "👁️ Hide Accounts";
+            }
+            else
+            {
+                // Hide accounts, show welcome
+                AccountsGroupBox.Visibility = Visibility.Collapsed;
+                WelcomePanel.Visibility = Visibility.Visible;
+                ViewAccountsButton.Content = "👁️ View All Accounts";
+            }
+        }
+
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new AddAccountDialog(_banks);

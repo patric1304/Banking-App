@@ -68,25 +68,88 @@
             </Border>
         </Grid>
 
-        <!-- Account List -->
-        <GroupBox Grid.Row="2" Header="All Accounts" Margin="0,0,0,20">
-            <GroupBox.Effect>
-                <DropShadowEffect Color="#E2E8F0" BlurRadius="15" ShadowDepth="3" Opacity="0.3"/>
-            </GroupBox.Effect>
-            <ListView Name="AccountsListView" SelectionMode="Single" BorderThickness="0">
-                <ListView.View>
-                    <GridView>
-                        <GridViewColumn Header="Account Holder" Width="220" DisplayMemberBinding="{Binding AccountHolder}"/>
-                        <GridViewColumn Header="IBAN" Width="250" DisplayMemberBinding="{Binding Iban}"/>
-                        <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding AccountType}"/>
-                        <GridViewColumn Header="Currency" Width="130" DisplayMemberBinding="{Binding AccountCurrency}"/>
-                        <GridViewColumn Header="Balance" Width="180" DisplayMemberBinding="{Binding Amount, StringFormat='{}{0:N2}'}"/>
-                    </GridView>
-                </ListView.View>
-            </ListView>
-        </GroupBox>
+        <!-- Welcome Message / Account List -->
+        <Grid Grid.Row="2" Margin="0,0,0,20">
+            <!-- Welcome Message (shown when accounts are hidden) -->
+            <Border x:Name="WelcomePanel" Background="White" CornerRadius="12" Padding="60,40" Margin="200,20" VerticalAlignment="Center" Visibility="Visible">
+                <Border.Effect>
+                    <DropShadowEffect Color="#E2E8F0" BlurRadius="20" ShadowDepth="5" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="👋 Welcome to Promise Banking!" 
+                              FontSize="34" 
+                              FontWeight="Bold" 
+                              Foreground="#2563EB"
+                              HorizontalAlignment="Center"
+                              Margin="0,0,0,10"
+                              TextWrapping="Wrap"/>
+                    <TextBlock Text="Your trusted partner in financial management" 
+                              FontSize="16" 
+                              Foreground="#64748B"
+                              HorizontalAlignment="Center"
+                              Margin="0,0,0,25"
+                              TextWrapping="Wrap"/>
+                    <Button x:Name="ViewAccountsButton" 
+                           Content="👁️ View All Accounts" 
+                           Width="200" 
+                           Height="50" 
+                           Click="ViewAccounts_Click" 
+                           FontSize="15"
+                           HorizontalAlignment="Center"
+                           Margin="0"/>
+                </StackPanel>
+            </Border>
 
-        <!-- Buttons -->
+            <!-- Account List -->
+            <GroupBox x:Name="AccountsGroupBox" Header="All Accounts" Margin="0,0,0,20" Visibility="Collapsed">
+                <GroupBox.Effect>
+                    <DropShadowEffect Color="#E2E8F0" BlurRadius="15" ShadowDepth="3" Opacity="0.3"/>
+                </GroupBox.Effect>
+                <ListView Name="AccountsListView" SelectionMode="Single" BorderThickness="0" FontSize="15">
+                    <ListView.View>
+                        <GridView>
+                            <GridViewColumn Header="Account Holder" Width="220">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AccountHolder}" FontWeight="SemiBold" FontSize="15"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="IBAN" Width="250">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Iban}" FontFamily="Consolas" FontSize="14" Foreground="#475569"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Type" Width="130">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AccountType}" FontSize="15"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Currency" Width="130">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding AccountCurrency}" FontWeight="Medium" FontSize="15" Foreground="#2563EB"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                            <GridViewColumn Header="Balance" Width="180">
+                                <GridViewColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Amount, StringFormat='{}{0:N2}'}" FontWeight="Bold" FontSize="16" Foreground="#10B981"/>
+                                    </DataTemplate>
+                                </GridViewColumn.CellTemplate>
+                            </GridViewColumn>
+                        </GridView>
+                    </ListView.View>
+                </ListView>
+            </GroupBox>
+        </Grid>
+
+        <!-- Action Buttons -->
         <WrapPanel Grid.Row="3" HorizontalAlignment="Center">
             <Button Content="➕ Create Account" Width="160" Height="45" Click="CreateAccount_Click" Margin="5"/>
             <Button Content="💰 Deposit" Width="140" Height="45" Click="Deposit_Click" Margin="5"/>
