@@ -1,0 +1,20 @@
+<Window x:Class="BankingApp.Views.AmountInputDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Amount Input" Height="180" Width="350" WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Name="PromptLabel" Grid.Row="0" Content="Enter amount:" Margin="0,5"/>
+        <TextBox Name="AmountInput" Grid.Row="0" Margin="0,35,0,5"/>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="OK" Width="80" Height="30" Margin="5" Click="OnOkClick"/>
+            <Button Content="Cancel" Width="80" Height="30" Margin="5" Click="OnCancelClick"/>
+        </StackPanel>
+    </Grid>
+</Window>

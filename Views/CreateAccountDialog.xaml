@@ -1,0 +1,36 @@
+<Window x:Class="BankingApp.Views.CreateAccountDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Create Account" Height="250" Width="400" WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Label Grid.Row="0" Content="Account Holder:" Margin="0,5"/>
+        <TextBox Name="AccountHolderInput" Grid.Row="0" Margin="120,5,0,5"/>
+
+        <Label Grid.Row="1" Content="Account Type:" Margin="0,5"/>
+        <ComboBox Name="AccountTypeCombo" Grid.Row="1" Margin="120,5,0,5" SelectedIndex="0">
+            <ComboBoxItem Content="Person"/>
+            <ComboBoxItem Content="Company"/>
+        </ComboBox>
+
+        <Label Grid.Row="2" Content="Currency:" Margin="0,5"/>
+        <ComboBox Name="CurrencyCombo" Grid.Row="2" Margin="120,5,0,5" SelectedIndex="0">
+            <ComboBoxItem Content="RON"/>
+            <ComboBoxItem Content="EUR"/>
+            <ComboBoxItem Content="USD"/>
+            <ComboBoxItem Content="GBP"/>
+        </ComboBox>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Create" Width="80" Height="30" Margin="5" Click="OnCreateClick"/>
+            <Button Content="Cancel" Width="80" Height="30" Margin="5" Click="OnCancelClick"/>
+        </StackPanel>
+    </Grid>
+</Window>

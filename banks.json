@@ -1,0 +1,33 @@
+[
+  {
+    "Name": "BCR",
+    "Swift": "dsf232e",
+    "Accounts": []
+  },
+  {
+    "Name": "Revolut",
+    "Swift": "REVOROBU",
+    "Accounts": [
+      {
+        "AccountHolder": "Pop Patric",
+        "AccountType": 0,
+        "AccountCurrency": 3,
+        "Iban": "RO38REVO1666586259441570",
+        "Amount": 10939500.00,
+        "Transactions": [
+          {
+            "Date": "2025-10-18T14:28:05.6669441Z",
+            "Description": "Deposit",
+            "Amount": 13000000
+          },
+          {
+            "Date": "2025-10-18T14:28:24.7790064Z",
+            "Description": "Currency change to GBP (fee 130000.00)",
+            "Amount": 10939500.00
+          }
+        ],
+        "AccountFeeCurrencyChange": 0.01
+      }
+    ]
+  }
+]
