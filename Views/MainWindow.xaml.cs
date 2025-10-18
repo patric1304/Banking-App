@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Media.Effects;
 using BankingApp.Models;
 
 namespace BankingApp.Views
@@ -18,6 +19,20 @@ namespace BankingApp.Views
             InitializeComponent();
             LoadData();
             RefreshAccountsList();
+        }
+
+        private void ShowDialogWithBlur(Window dialog)
+        {
+            // Add blur effect to main window
+            this.Effect = new BlurEffect { Radius = 10 };
+            this.IsEnabled = false;
+            
+            dialog.Owner = this;
+            var result = dialog.ShowDialog();
+            
+            // Remove blur effect
+            this.Effect = null;
+            this.IsEnabled = true;
         }
 
         private void LoadData()
@@ -60,12 +75,17 @@ namespace BankingApp.Views
             var allAccounts = _banks.SelectMany(b => b.Accounts).ToList();
             AccountsListView.ItemsSource = null;
             AccountsListView.ItemsSource = allAccounts;
+            
+            // Update stats
+            TotalAccountsText.Text = allAccounts.Count.ToString();
+            TotalBanksText.Text = _banks.Count.ToString();
         }
 
         private void CreateAccount_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new AddAccountDialog(_banks);
-            if (dialog.ShowDialog() == true)
+            ShowDialogWithBlur(dialog);
+            if (dialog.DialogResult == true)
             {
                 var bank = _banks.FirstOrDefault(b => b.Name == dialog.SelectedBankName);
                 if (bank == null)
@@ -114,7 +134,8 @@ namespace BankingApp.Views
             }
 
             var dialog = new AmountDialog("Deposit");
-            if (dialog.ShowDialog() == true)
+            ShowDialogWithBlur(dialog);
+            if (dialog.DialogResult == true)
             {
                 selectedAccount.Deposit(dialog.Amount);
                 RefreshAccountsList();
@@ -132,7 +153,8 @@ namespace BankingApp.Views
             }
 
             var dialog = new AmountDialog("Withdraw");
-            if (dialog.ShowDialog() == true)
+            ShowDialogWithBlur(dialog);
+            if (dialog.DialogResult == true)
             {
                 if (selectedAccount.Withdraw(dialog.Amount))
                 {
@@ -156,7 +178,8 @@ namespace BankingApp.Views
             }
 
             var dialog = new CurrencyDialog();
-            if (dialog.ShowDialog() == true)
+            ShowDialogWithBlur(dialog);
+            if (dialog.DialogResult == true)
             {
                 if (selectedAccount.ChangeCurrency(dialog.SelectedCurrency, GetConversionRate))
                 {
@@ -180,7 +203,7 @@ namespace BankingApp.Views
             }
 
             var transactionWindow = new TransactionWindow(selectedAccount);
-            transactionWindow.ShowDialog();
+            ShowDialogWithBlur(transactionWindow);
         }
 
         private void DeleteAccount_Click(object sender, RoutedEventArgs e)

@@ -55,5 +55,10 @@
         "AccountFeeCurrencyChange": 0.01
       }
     ]
+  },
+  {
+    "Name": "BT",
+    "Swift": "BTXXROBU",
+    "Accounts": []
   }
 ]

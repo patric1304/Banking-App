@@ -1,41 +1,99 @@
 <Window x:Class="BankingApp.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Banking System" Height="500" Width="900">
-    <Grid Margin="10">
+        Title="Banking System" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="25">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Grid.Row="0" Text="Banking System" FontSize="24" FontWeight="Bold" 
-                   Margin="0,0,0,10" HorizontalAlignment="Center"/>
+        <Border Grid.Row="0" Background="#FF2563EB" CornerRadius="12" Padding="25,20" Margin="0,0,0,25">
+            <StackPanel>
+                <TextBlock Text="🏦 Promise Banking System" 
+                          FontSize="32" 
+                          FontWeight="Bold" 
+                          Foreground="White"
+                          HorizontalAlignment="Center"/>
+                <TextBlock Text="Manage your accounts with ease, keep your money safe" 
+                          FontSize="16" 
+                          Foreground="#FFE0E7FF"
+                          FontWeight="SemiBold"
+                          FontStyle="Italic"
+                          HorizontalAlignment="Center"
+                          Margin="0,5,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Stats Panel -->
+        <Grid Grid.Row="1" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="White" CornerRadius="10" Padding="20" Margin="0,0,10,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#E2E8F0" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Total Accounts" FontSize="14" Foreground="#64748B"/>
+                    <TextBlock x:Name="TotalAccountsText" Text="0" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="20" Margin="5,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#E2E8F0" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Total Banks" FontSize="14" Foreground="#64748B"/>
+                    <TextBlock x:Name="TotalBanksText" Text="0" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="20" Margin="10,0,0,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#E2E8F0" BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                </Border.Effect>
+                <StackPanel>
+                    <TextBlock Text="Quick Actions" FontSize="14" Foreground="#64748B"/>
+                    <TextBlock Text="6 Available" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
+                </StackPanel>
+            </Border>
+        </Grid>
 
         <!-- Account List -->
-        <GroupBox Grid.Row="1" Header="Accounts" Margin="0,0,0,10">
-            <ListView Name="AccountsListView" SelectionMode="Single">
+        <GroupBox Grid.Row="2" Header="All Accounts" Margin="0,0,0,20">
+            <GroupBox.Effect>
+                <DropShadowEffect Color="#E2E8F0" BlurRadius="15" ShadowDepth="3" Opacity="0.3"/>
+            </GroupBox.Effect>
+            <ListView Name="AccountsListView" SelectionMode="Single" BorderThickness="0">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Account Holder" Width="150" DisplayMemberBinding="{Binding AccountHolder}"/>
-                        <GridViewColumn Header="IBAN" Width="150" DisplayMemberBinding="{Binding Iban}"/>
-                        <GridViewColumn Header="Type" Width="100" DisplayMemberBinding="{Binding AccountType}"/>
-                        <GridViewColumn Header="Currency" Width="80" DisplayMemberBinding="{Binding AccountCurrency}"/>
-                        <GridViewColumn Header="Balance" Width="100" DisplayMemberBinding="{Binding Amount}"/>
+                        <GridViewColumn Header="Account Holder" Width="220" DisplayMemberBinding="{Binding AccountHolder}"/>
+                        <GridViewColumn Header="IBAN" Width="250" DisplayMemberBinding="{Binding Iban}"/>
+                        <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding AccountType}"/>
+                        <GridViewColumn Header="Currency" Width="130" DisplayMemberBinding="{Binding AccountCurrency}"/>
+                        <GridViewColumn Header="Balance" Width="180" DisplayMemberBinding="{Binding Amount, StringFormat='{}{0:N2}'}"/>
                     </GridView>
                 </ListView.View>
             </ListView>
         </GroupBox>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button Content="Create Account" Width="120" Height="30" Margin="5" Click="CreateAccount_Click"/>
-            <Button Content="Deposit" Width="100" Height="30" Margin="5" Click="Deposit_Click"/>
-            <Button Content="Withdraw" Width="100" Height="30" Margin="5" Click="Withdraw_Click"/>
-            <Button Content="Change Currency" Width="130" Height="30" Margin="5" Click="ChangeCurrency_Click"/>
-            <Button Content="View Transactions" Width="140" Height="30" Margin="5" Click="ViewTransactions_Click"/>
-            <Button Content="Delete Account" Width="120" Height="30" Margin="5" Click="DeleteAccount_Click"/>
-        </StackPanel>
+        <WrapPanel Grid.Row="3" HorizontalAlignment="Center">
+            <Button Content="➕ Create Account" Width="160" Height="45" Click="CreateAccount_Click" Margin="5"/>
+            <Button Content="💰 Deposit" Width="140" Height="45" Click="Deposit_Click" Margin="5"/>
+            <Button Content="💸 Withdraw" Width="140" Height="45" Click="Withdraw_Click" Margin="5"/>
+            <Button Content="💱 Change Currency" Width="180" Height="45" Click="ChangeCurrency_Click" Margin="5"/>
+            <Button Content="📊 View Transactions" Width="190" Height="45" Click="ViewTransactions_Click" Margin="5"/>
+            <Button Content="🗑️ Delete Account" Width="170" Height="45" Click="DeleteAccount_Click" Margin="5"/>
+        </WrapPanel>
     </Grid>
 </Window>
