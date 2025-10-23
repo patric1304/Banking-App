@@ -43,7 +43,7 @@ public class Bank
 
         if (!fromAccount.Withdraw(amount)) return false;
 
-        // Convert amount if currencies differ
+
         if (fromAccount.AccountCurrency != toAccount.AccountCurrency)
         {
             decimal rate = rateProvider(fromAccount.AccountCurrency, toAccount.AccountCurrency);
