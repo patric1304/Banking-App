@@ -3,6 +3,7 @@ namespace BankingApp.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using BankingApp.Helpers;
@@ -13,6 +14,7 @@ public class MainViewModel : BaseViewModel
 {
     private readonly BankService _bankService;
     private bool _isAccountsVisible;
+    private bool _isLoading;
 
     public ObservableCollection<Account> Accounts { get; set; }
     
@@ -32,6 +34,16 @@ public class MainViewModel : BaseViewModel
 
     public bool IsWelcomePanelVisible => !_isAccountsVisible;
 
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            _isLoading = value;
+            OnPropertyChanged();
+        }
+    }
+
     public ICommand ViewAccountsCommand { get; }
     public ICommand CreateAccountCommand { get; }
     public ICommand DepositCommand { get; }
@@ -48,12 +60,12 @@ public class MainViewModel : BaseViewModel
         LoadAccounts();
         
         ViewAccountsCommand = new RelayCommand(ToggleAccountsView);
-        CreateAccountCommand = new RelayCommand(CreateAccount);
-        DepositCommand = new RelayCommand(Deposit, CanExecuteAccountAction);
-        WithdrawCommand = new RelayCommand(Withdraw, CanExecuteAccountAction);
-        ChangeCurrencyCommand = new RelayCommand(ChangeCurrency, CanExecuteAccountAction);
+        CreateAccountCommand = new RelayCommand(async _ => await CreateAccountAsync());
+        DepositCommand = new RelayCommand(async param => await DepositAsync(param), CanExecuteAccountAction);
+        WithdrawCommand = new RelayCommand(async param => await WithdrawAsync(param), CanExecuteAccountAction);
+        ChangeCurrencyCommand = new RelayCommand(async param => await ChangeCurrencyAsync(param), CanExecuteAccountAction);
         ViewTransactionsCommand = new RelayCommand(ViewTransactions, CanExecuteAccountAction);
-        DeleteAccountCommand = new RelayCommand(DeleteAccount, CanExecuteAccountAction);
+        DeleteAccountCommand = new RelayCommand(async param => await DeleteAccountAsync(param), CanExecuteAccountAction);
         
         IsAccountsVisible = false;
     }
@@ -63,32 +75,40 @@ public class MainViewModel : BaseViewModel
         IsAccountsVisible = !IsAccountsVisible;
     }
 
-    private void CreateAccount(object parameter)
+    private async Task CreateAccountAsync()
     {
-        // Pass the list of banks to the dialog constructor
         var dialog = new Views.AddAccountDialog(_bankService.GetAllBanks())
         {
             Owner = Application.Current.MainWindow,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
+        
         if (dialog.ShowDialog() == true)
         {
-            _bankService.CreateAccount(
-                dialog.SelectedBankName,
-                dialog.AccountHolder,
-                dialog.AccountType,
-                dialog.AccountCurrency
-            );
-            RefreshAccounts();
+            IsLoading = true;
+            try
+            {
+                await _bankService.CreateAccountAsync(
+                    dialog.SelectedBankName,
+                    dialog.AccountHolder,
+                    dialog.AccountType,
+                    dialog.AccountCurrency
+                );
+                await RefreshAccountsAsync();
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
     }
 
     private bool CanExecuteAccountAction(object parameter)
     {
-        return parameter is Account;
+        return parameter is Account && !IsLoading;
     }
 
-    private void Deposit(object parameter)
+    private async Task DepositAsync(object parameter)
     {
         if (parameter is not Account account) return;
 
@@ -97,18 +117,27 @@ public class MainViewModel : BaseViewModel
             Owner = Application.Current.MainWindow,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
+        
         if (dialog.ShowDialog() == true)
         {
-            if (_bankService.Deposit(account.Iban, dialog.Amount))
+            IsLoading = true;
+            try
             {
-                RefreshAccounts();
-                MessageBox.Show($"Successfully deposited {dialog.Amount} {account.AccountCurrency}",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (await _bankService.DepositAsync(account.Iban, dialog.Amount))
+                {
+                    await RefreshAccountsAsync();
+                    MessageBox.Show($"Successfully deposited {dialog.Amount} {account.AccountCurrency}",
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
     }
 
-    private void Withdraw(object parameter)
+    private async Task WithdrawAsync(object parameter)
     {
         if (parameter is not Account account) return;
 
@@ -117,44 +146,61 @@ public class MainViewModel : BaseViewModel
             Owner = Application.Current.MainWindow,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
+        
         if (dialog.ShowDialog() == true)
         {
-            if (_bankService.Withdraw(account.Iban, dialog.Amount))
+            IsLoading = true;
+            try
             {
-                RefreshAccounts();
-                MessageBox.Show($"Successfully withdrew {dialog.Amount} {account.AccountCurrency}",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (await _bankService.WithdrawAsync(account.Iban, dialog.Amount))
+                {
+                    await RefreshAccountsAsync();
+                    MessageBox.Show($"Successfully withdrew {dialog.Amount} {account.AccountCurrency}",
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Insufficient funds!", "Error", 
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                MessageBox.Show("Insufficient funds!", "Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                IsLoading = false;
             }
         }
     }
 
-    private void ChangeCurrency(object parameter)
+    private async Task ChangeCurrencyAsync(object parameter)
     {
         if (parameter is not Account account) return;
 
-        // CurrencyDialog doesn't take parameters - create it without arguments
         var dialog = new Views.CurrencyDialog()
         {
             Owner = Application.Current.MainWindow,
             WindowStartupLocation = WindowStartupLocation.CenterOwner
         };
+        
         if (dialog.ShowDialog() == true)
         {
-            if (_bankService.ChangeCurrency(account.Iban, dialog.SelectedCurrency, GetConversionRate))
+            IsLoading = true;
+            try
             {
-                RefreshAccounts();
-                MessageBox.Show($"Currency changed to {dialog.SelectedCurrency}",
-                    "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                if (await _bankService.ChangeCurrencyAsync(account.Iban, dialog.SelectedCurrency, GetConversionRate))
+                {
+                    await RefreshAccountsAsync();
+                    MessageBox.Show($"Currency changed to {dialog.SelectedCurrency}",
+                        "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show("Insufficient funds for currency change!",
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
-            else
+            finally
             {
-                MessageBox.Show("Insufficient funds for currency change!",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                IsLoading = false;
             }
         }
     }
@@ -171,7 +217,7 @@ public class MainViewModel : BaseViewModel
         window.ShowDialog();
     }
 
-    private void DeleteAccount(object parameter)
+    private async Task DeleteAccountAsync(object parameter)
     {
         if (parameter is not Account account) return;
 
@@ -184,11 +230,19 @@ public class MainViewModel : BaseViewModel
 
         if (result == MessageBoxResult.Yes)
         {
-            if (_bankService.DeleteAccount(account.Iban))
+            IsLoading = true;
+            try
             {
-                RefreshAccounts();
-                MessageBox.Show("Account deleted successfully!", "Success",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                if (await _bankService.DeleteAccountAsync(account.Iban))
+                {
+                    await RefreshAccountsAsync();
+                    MessageBox.Show("Account deleted successfully!", "Success",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
     }
@@ -202,11 +256,17 @@ public class MainViewModel : BaseViewModel
         }
     }
 
-    private void RefreshAccounts()
+    private async Task RefreshAccountsAsync()
     {
-        LoadAccounts();
-        OnPropertyChanged(nameof(TotalAccounts));
-        OnPropertyChanged(nameof(TotalBanks));
+        await Task.Run(() =>
+        {
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                LoadAccounts();
+                OnPropertyChanged(nameof(TotalAccounts));
+                OnPropertyChanged(nameof(TotalBanks));
+            });
+        });
     }
 
     private decimal GetConversionRate(AccountCurrency from, AccountCurrency to)

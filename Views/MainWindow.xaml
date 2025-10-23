@@ -38,6 +38,9 @@
             <!-- Total Accounts -->
             <Border Grid.Column="0" Background="White" CornerRadius="12" 
                     Padding="25" Margin="0,0,10,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#1E293B" Opacity="0.1" BlurRadius="20" ShadowDepth="0"/>
+                </Border.Effect>
                 <StackPanel>
                     <TextBlock Text="Total Accounts" FontSize="14" 
                               Foreground="#64748B" Margin="0,0,0,10"/>
@@ -50,6 +53,9 @@
             <!-- Total Banks -->
             <Border Grid.Column="1" Background="White" CornerRadius="12" 
                     Padding="25" Margin="5,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#1E293B" Opacity="0.1" BlurRadius="20" ShadowDepth="0"/>
+                </Border.Effect>
                 <StackPanel>
                     <TextBlock Text="Total Banks" FontSize="14" 
                               Foreground="#64748B" Margin="0,0,0,10"/>
@@ -62,6 +68,9 @@
             <!-- Quick Actions -->
             <Border Grid.Column="2" Background="White" CornerRadius="12" 
                     Padding="25" Margin="10,0,0,0">
+                <Border.Effect>
+                    <DropShadowEffect Color="#1E293B" Opacity="0.1" BlurRadius="20" ShadowDepth="0"/>
+                </Border.Effect>
                 <StackPanel>
                     <TextBlock Text="Quick Actions" FontSize="14" 
                               Foreground="#64748B" Margin="0,0,0,10"/>
@@ -72,15 +81,13 @@
         </Grid>
 
         <!-- Main Content Area -->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Margin="0,0,0,20">
             <!-- Welcome Panel -->
             <Border Background="White" CornerRadius="12" 
                     Padding="60,40" Margin="200,20"
-                    Visibility="{Binding IsWelcomePanelVisible, 
-                                Converter={StaticResource BoolToVisibilityConverter}}">
+                    Visibility="{Binding IsWelcomePanelVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Border.Effect>
-                    <DropShadowEffect Color="#1E293B" Opacity="0.1" 
-                                     BlurRadius="20" ShadowDepth="0"/>
+                    <DropShadowEffect Color="#1E293B" Opacity="0.1" BlurRadius="20" ShadowDepth="0"/>
                 </Border.Effect>
                 <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                     <TextBlock Text="👋 Welcome to Promise Banking!" 
@@ -100,8 +107,7 @@
 
             <!-- Accounts List -->
             <GroupBox Header="Accounts" FontSize="16" FontWeight="SemiBold"
-                      Visibility="{Binding IsAccountsVisible, 
-                                  Converter={StaticResource BoolToVisibilityConverter}}">
+                      Visibility="{Binding IsAccountsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <ListView x:Name="AccountsListView" 
                          ItemsSource="{Binding Accounts}"
                          FontSize="14">
@@ -157,7 +163,7 @@
 
         <!-- Action Buttons -->
         <StackPanel Grid.Row="3" Orientation="Horizontal" 
-                   HorizontalAlignment="Center" Margin="0,20,0,0">
+                   HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="➕ Create Account" 
                     Command="{Binding CreateAccountCommand}"
                     Width="150" Height="45" Margin="5"/>
@@ -182,5 +188,14 @@
                     CommandParameter="{Binding SelectedItem, ElementName=AccountsListView}"
                     Width="160" Height="45" Margin="5"/>
         </StackPanel>
+
+        <!-- Loading Overlay -->
+        <Grid Grid.RowSpan="4" Background="#80000000" 
+              Visibility="{Binding IsLoading, Converter={StaticResource BoolToVisibilityConverter}}">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                <TextBlock Text="⏳" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <TextBlock Text="Processing..." FontSize="18" Foreground="White" FontWeight="SemiBold"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>
