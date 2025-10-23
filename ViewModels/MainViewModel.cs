@@ -66,7 +66,11 @@ public class MainViewModel : BaseViewModel
     private void CreateAccount(object parameter)
     {
         // Pass the list of banks to the dialog constructor
-        var dialog = new Views.AddAccountDialog(_bankService.GetAllBanks());
+        var dialog = new Views.AddAccountDialog(_bankService.GetAllBanks())
+        {
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         if (dialog.ShowDialog() == true)
         {
             _bankService.CreateAccount(
@@ -88,7 +92,11 @@ public class MainViewModel : BaseViewModel
     {
         if (parameter is not Account account) return;
 
-        var dialog = new Views.AmountDialog("Deposit");
+        var dialog = new Views.AmountDialog("Deposit")
+        {
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         if (dialog.ShowDialog() == true)
         {
             if (_bankService.Deposit(account.Iban, dialog.Amount))
@@ -104,7 +112,11 @@ public class MainViewModel : BaseViewModel
     {
         if (parameter is not Account account) return;
 
-        var dialog = new Views.AmountDialog("Withdraw");
+        var dialog = new Views.AmountDialog("Withdraw")
+        {
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         if (dialog.ShowDialog() == true)
         {
             if (_bankService.Withdraw(account.Iban, dialog.Amount))
@@ -126,7 +138,11 @@ public class MainViewModel : BaseViewModel
         if (parameter is not Account account) return;
 
         // CurrencyDialog doesn't take parameters - create it without arguments
-        var dialog = new Views.CurrencyDialog();
+        var dialog = new Views.CurrencyDialog()
+        {
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         if (dialog.ShowDialog() == true)
         {
             if (_bankService.ChangeCurrency(account.Iban, dialog.SelectedCurrency, GetConversionRate))
@@ -147,7 +163,11 @@ public class MainViewModel : BaseViewModel
     {
         if (parameter is not Account account) return;
 
-        var window = new Views.TransactionWindow(account);
+        var window = new Views.TransactionWindow(account)
+        {
+            Owner = Application.Current.MainWindow,
+            WindowStartupLocation = WindowStartupLocation.CenterOwner
+        };
         window.ShowDialog();
     }
 
