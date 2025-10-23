@@ -28,65 +28,6 @@ public class BankService
         return _banks.FirstOrDefault(b => b.Name == name);
     }
 
-    public void CreateBank(string name, string swift)
-    {
-        var bank = new Bank(name, swift);
-        _banks.Add(bank);
-        SaveData();
-    }
-
-    public void CreateAccount(string bankName, string accountHolder, AccountType accountType, AccountCurrency currency)
-    {
-        var bank = GetOrCreateBank(bankName);
-        var iban = GenerateIban(bank);
-        var account = new Account(accountHolder, accountType, currency, iban);
-        bank.OpenAccount(account);
-        SaveData();
-    }
-
-    public bool Deposit(string iban, decimal amount)
-    {
-        var account = FindAccount(iban);
-        if (account == null) return false;
-        
-        account.Deposit(amount);
-        SaveData();
-        return true;
-    }
-
-    public bool Withdraw(string iban, decimal amount)
-    {
-        var account = FindAccount(iban);
-        if (account == null) return false;
-
-        bool success = account.Withdraw(amount);
-        if (success) SaveData();
-        return success;
-    }
-
-    public bool ChangeCurrency(string iban, AccountCurrency newCurrency, Func<AccountCurrency, AccountCurrency, decimal> rateProvider)
-    {
-        var account = FindAccount(iban);
-        if (account == null) return false;
-        
-        bool success = account.ChangeCurrency(newCurrency, rateProvider);
-        if (success) SaveData();
-        return success;
-    }
-
-    public bool DeleteAccount(string iban)
-    {
-        foreach (var bank in _banks)
-        {
-            if (bank.CloseAccount(iban))
-            {
-                SaveData();
-                return true;
-            }
-        }
-        return false;
-    }
-
     public Account? GetAccount(string iban)
     {
         return FindAccount(iban);
@@ -105,11 +46,6 @@ public class BankService
     public int GetTotalBanksCount()
     {
         return _banks.Count;
-    }
-
-    public async Task InitializeAsync()
-    {
-        await LoadDataAsync();
     }
 
     public async Task CreateAccountAsync(string bankName, string accountHolder, AccountType accountType, AccountCurrency currency)
@@ -204,25 +140,6 @@ public class BankService
         if (File.Exists(_dataFile))
         {
             var json = File.ReadAllText(_dataFile);
-            var banks = JsonSerializer.Deserialize<List<Bank>>(json);
-            if (banks != null)
-            {
-                _banks = banks;
-            }
-        }
-    }
-
-    private void SaveData()
-    {
-        var json = JsonSerializer.Serialize(_banks, new JsonSerializerOptions { WriteIndented = true });
-        File.WriteAllText(_dataFile, json);
-    }
-
-    private async Task LoadDataAsync()
-    {
-        if (File.Exists(_dataFile))
-        {
-            var json = await File.ReadAllTextAsync(_dataFile);
             var banks = JsonSerializer.Deserialize<List<Bank>>(json);
             if (banks != null)
             {
