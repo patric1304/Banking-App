@@ -166,13 +166,17 @@
                    HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button Content="➕ Create Account" 
                     Command="{Binding CreateAccountCommand}"
-                    Width="150" Height="45" Margin="5"/>
+                    Width="175" Height="45" Margin="5"/>
             <Button Content="💰 Deposit" 
                     Command="{Binding DepositCommand}"
                     CommandParameter="{Binding SelectedItem, ElementName=AccountsListView}"
                     Width="150" Height="45" Margin="5"/>
             <Button Content="💸 Withdraw" 
                     Command="{Binding WithdrawCommand}"
+                    CommandParameter="{Binding SelectedItem, ElementName=AccountsListView}"
+                    Width="150" Height="45" Margin="5"/>
+            <Button Content="💵 Transfer" 
+                    Command="{Binding TransferCommand}"
                     CommandParameter="{Binding SelectedItem, ElementName=AccountsListView}"
                     Width="150" Height="45" Margin="5"/>
             <Button Content="💱 Change Currency" 

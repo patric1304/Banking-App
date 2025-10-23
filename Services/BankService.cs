@@ -100,6 +100,78 @@ public class BankService
         return false;
     }
 
+    public async Task<(bool success, string message)> TransferAsync(string fromIban, string toIban, decimal amount)
+    {
+        var fromAccount = FindAccount(fromIban);
+        var toAccount = FindAccount(toIban);
+
+        if (fromAccount == null)
+            return (false, "Source account not found!");
+        
+        if (toAccount == null)
+            return (false, "Destination account not found!");
+        
+        if (fromAccount == toAccount)
+            return (false, "Cannot transfer to the same account!");
+        
+        if (amount <= 0)
+            return (false, "Amount must be greater than zero!");
+        
+        if (fromAccount.Amount < amount)
+            return (false, "Insufficient funds!");
+
+        var fromBank = _banks.FirstOrDefault(b => b.Accounts.Contains(fromAccount));
+        var toBank = _banks.FirstOrDefault(b => b.Accounts.Contains(toAccount));
+        
+        bool sameBank = fromBank == toBank;
+        
+        var random = new Random();
+        int delaySeconds = sameBank ? random.Next(1, 11) : random.Next(11, 21);
+        string transferType = sameBank ? "same bank" : "different banks";
+        
+        await Task.Delay(TimeSpan.FromSeconds(delaySeconds));
+        
+        decimal amountToDeposit = amount;
+        
+        if (fromAccount.AccountCurrency != toAccount.AccountCurrency)
+        {
+            var rate = GetConversionRate(fromAccount.AccountCurrency, toAccount.AccountCurrency);
+            amountToDeposit = amount * rate * 0.99m;
+        }
+        
+        if (!fromAccount.Withdraw(amount))
+            return (false, "Withdrawal failed!");
+        
+        toAccount.Deposit(amountToDeposit);
+        
+        await SaveDataAsync();
+        
+        return (true, "Transfer completed successfully!");
+    }
+
+    private decimal GetConversionRate(AccountCurrency from, AccountCurrency to)
+    {
+        if (from == to) return 1.0m;
+        
+        if (from == AccountCurrency.RON && to == AccountCurrency.EUR) return 0.20m;
+        if (from == AccountCurrency.RON && to == AccountCurrency.USD) return 0.22m;
+        if (from == AccountCurrency.RON && to == AccountCurrency.GBP) return 0.17m;
+        
+        if (from == AccountCurrency.EUR && to == AccountCurrency.RON) return 5.00m;
+        if (from == AccountCurrency.EUR && to == AccountCurrency.USD) return 1.10m;
+        if (from == AccountCurrency.EUR && to == AccountCurrency.GBP) return 0.85m;
+        
+        if (from == AccountCurrency.USD && to == AccountCurrency.RON) return 4.50m;
+        if (from == AccountCurrency.USD && to == AccountCurrency.EUR) return 0.91m;
+        if (from == AccountCurrency.USD && to == AccountCurrency.GBP) return 0.77m;
+        
+        if (from == AccountCurrency.GBP && to == AccountCurrency.RON) return 5.90m;
+        if (from == AccountCurrency.GBP && to == AccountCurrency.EUR) return 1.18m;
+        if (from == AccountCurrency.GBP && to == AccountCurrency.USD) return 1.30m;
+        
+        return 1.0m;
+    }
+
     private Account? FindAccount(string iban)
     {
         return _banks.SelectMany(b => b.Accounts)

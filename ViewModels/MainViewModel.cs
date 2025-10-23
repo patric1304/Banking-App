@@ -51,6 +51,7 @@ public class MainViewModel : BaseViewModel
     public ICommand ChangeCurrencyCommand { get; }
     public ICommand ViewTransactionsCommand { get; }
     public ICommand DeleteAccountCommand { get; }
+    public ICommand TransferCommand { get; }
 
     public MainViewModel()
     {
@@ -66,6 +67,7 @@ public class MainViewModel : BaseViewModel
         ChangeCurrencyCommand = new RelayCommand(async param => await ChangeCurrencyAsync(param), CanExecuteAccountAction);
         ViewTransactionsCommand = new RelayCommand(ViewTransactions, CanExecuteAccountAction);
         DeleteAccountCommand = new RelayCommand(async param => await DeleteAccountAsync(param), CanExecuteAccountAction);
+        TransferCommand = new RelayCommand(async param => await TransferAsync(param), CanExecuteAccountAction);
         
         IsAccountsVisible = false;
     }
@@ -238,6 +240,54 @@ public class MainViewModel : BaseViewModel
                     await RefreshAccountsAsync();
                     MessageBox.Show("Account deleted successfully!", "Success",
                         MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+    }
+
+    private async Task TransferAsync(object parameter)
+    {
+        if (parameter is not Account fromAccount)
+            return;
+
+        var allAccounts = _bankService.GetAllAccounts();
+        if (allAccounts.Count < 2)
+        {
+            MessageBox.Show("You need at least two accounts to make a transfer!", "Transfer Error",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        var dialog = new Views.TransferDialog(allAccounts, fromAccount)
+        {
+            Owner = Application.Current.MainWindow
+        };
+
+        if (dialog.ShowDialog() == true)
+        {
+            try
+            {
+                IsLoading = true;
+                
+                var (success, message) = await _bankService.TransferAsync(
+                    fromAccount.Iban,
+                    dialog.SelectedToAccount!.Iban,
+                    dialog.Amount);
+
+                if (success)
+                {
+                    await RefreshAccountsAsync();
+                    MessageBox.Show(message, "Transfer Successful",
+                        MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show(message, "Transfer Failed",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             finally
